@@ -1,0 +1,1420 @@
+Select all records where the second letter of the City is an "a".
+SELECT * FROM Customers
+WHERE City LIKE '_a%';
+
+Select all records where the first letter of the City is an "a" or a "c" or an "s".
+SELECT * FROM Customers
+WHERE City LIKE '[acs]%';
+
+Select all records where the first letter of the City starts with anything from an "a" to an "f".
+SELECT * FROM Customers
+WHERE City LIKE '[a-f]%';
+Select all records where the first letter of the City is NOT an "a" or a "c" or an "f".
+SELECT * FROM Customers
+WHERE City LIKE '[!acf]%';
+Use the IN operator to select all the records where Country is either "Norway" or "France".
+SELECT * FROM Customers
+ WHERE Country IN (‘Norway’,'France');
+Use the IN operator to select all the records where Country is NOT "Norway" and NOT "France".
+SELECT * FROM Customers
+ WHERE Country NOT IN('Norway', 'France');
+
+
+-- <<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- LABORATORIO CLASE 1
+-- <<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- 1- Eliminar si existe la base de datos Laboratorio.
+drop database if exists Laboratorio;
+-- drop schema if exists ;
+
+
+-- 2- Crear la base de datos Laboratorio.
+create database Laboratorio;
+
+Use Laboratorio;
+
+-- 3- Crear la tabla Facturas dentro de la base de datos con el siguiente detalle:
+
+create table Facturas
+(
+	Letra 		char (1) ,
+	Numero 	integer unsigned ,
+    ClienteID  integer unsigned not null,
+    ArticuloID integer unsigned not null,
+	Fecha 		date not null,
+	Monto 		double not null,
+	primary key (Letra, Numfacturasero)
+);
+
+-- 4- Crear la tabla Articulos dentro de la base de datos con el siguiente detalle:
+
+create table Articulos
+(
+	ArticuloID	integer unsigned ,
+	Nombre 	varchar(50) not null,
+	Precio 	double,
+	Stock 	integer unsigned not null ,
+	primary key (ArticuloID)
+);
+
+
+-- 5- Crear la tabla Clientes dentro de la base de datos con el siguiente detalle.
+
+create table Clientes
+(
+	ClienteID      	integer unsigned,
+	Nombre    	varchar(50) not null,
+	Apellido   	varchar(50) ,
+	Cuit       	char(16) ,
+	Direccion  	varchar(50) not null,
+    Comentarios 	varchar(50),
+    primary key (ClienteID)
+);
+
+
+-- 6- Cargar 5 registros en la tabla Facturas , Articulos y Clientes.	 
+
+insert into facturas (Letra, Numero, ClienteID,ArticuloID,Fecha,Monto)
+values ('A',1,1,1,'2016-08-12', 1500.50);
+
+insert into articulos (articuloID,nombre,precio,stock)
+values (1, 'martillo de goma',25,250.75);
+
+insert into clientes (clienteID, nombre, direccion)
+values (1,'Brenda Escobar', 'Santa Fe 1548');
+
+use laboratorio;
+insert into facturas(Letra, Numero, ClienteID, ArticuloID, Fecha, Monto) values 
+('B', 1, 1, 1, '2011/10/18', 500),
+('A', 2, 2, 2, '2011/10/18', 2500),
+('A', 3, 3, 3, '2011/10/18', 320),
+('A', 4, 4, 4, '2011/10/18', 120),
+('A', 5, 5, 5, curdate(), 300);
+
+-- curdate(),una funcion, no recibe parametros en este caso,(current date). Esto devuelve la fecha actual de las facturas!
+-- curtime(), muestra la hora
+-- select * from facturas;
+
+insert into articulos(ArticuloID, Nombre, Precio, Stock) values 
+(6, 'Destornillador', 25, 50),
+(2, 'Pinza', 35, 22),
+(3, 'Martillo', 15, 28),
+(4, 'Maza', 35, 18),
+(5, 'Balde', 55, 13);
+
+-- El primary key PK, siempre ordena de manera ascendente sin importar el orden, en este caso, articulosID tiene el PK.
+
+-- select * from articulos;
+
+insert into Clientes (ClienteID, Nombre, Apellido, Cuit, Direccion, Comentarios) values 
+(6, 'Agustin', 'Diaz', '20-35987452-0', 'Lima 458', NULL),
+(2, 'Angela', 'Lopez', '20-37987854-0', 'Peru 32', NULL),
+(3, 'Cristian', 'Fraga', '20-36887498-0', 'Chile 6985', NULL),
+(4, 'Sol', 'Cabral', '20-25982495-0', 'Lavalle 1201', NULL),
+(5, 'Ezequiel', 'Perez', '20-21987111-0', 'Uruguay 25', NULL);
+
+-- select * from Clientes;
+-- select * (el asterisco, todos los campos, seleccciona todos los campos y los muestra) from 
+select concat(nombre, ' ', apellido)  as 'Nombre y apellido', cuit from clientes;
+select concat(nombre, ' ', apellido) Nombre_y_apellido, cuit from clientes;
+
+select a.*, round (precio * 1.21,2) as precio_con_iva,
+stock + 100 as stock_final, 
+precio * 0.9 as precio_con_descuento, 
+precio * 2.5 * 0.90 as 'Black friday, compre ya ajjaa!',
+'China' as Origen 
+from articulos as a;
+-- repite los valores restantes en el caso de Origen
+
+select * from facturas;
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia from facturas;
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia from facturas where
+day(fecha) < 15;
+-- para ver los registros de la quincena
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia from facturas where
+year(fecha) = 2011 or monto > 1000;
+-- facturas del año 2011;  <> , !=, distinto del año 2011
+
+select * from clientes where apellido = 'lopez' or apellido= 'fraga'or apellido= 'cabral';
+select * from clientes where apellido in ('lopez', 'fraga', 'cabral','escobar');
+-- ste profe que usa mis datos de ejemplo que no existen en la tabla (?
+select * from clientes where apellido not in ('lopez', 'fraga', 'cabral','escobar');
+select * from clientes where clienteid in (1,2,5);
+select * from clientes where clienteid >= 3 and clienteid <=5;
+select * from clientes where clienteid not between 3 and 5;
+
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia,
+case
+when day(fecha) < 16 then '1 quincena'
+else '2 quincena'
+end quincena,
+case
+when month(fecha) between 1 and 3 then 'Primer trimestre'
+when month(fecha) between 4 and 6 then 'Segundo trimestre'
+when month(fecha) between 7 and 9 then 'Tercer trimestre'
+else 'Cuarto trimestre'
+end Trimestre
+from facturas ;
+
+insert into clientes (clienteid,nombre,apellido,cuit,direccion) values (50,'jose','benuto','20364749354','Loria 940'),
+(51,'gladys','acosta','27248959092','Belaustegui 2755'),(52,'axel','garcia','20347985412','Cramer 1653'),
+(53,'emilia','baudino','27389983584','Santa Fe 1548'),(54,'diego','iogna','20255788292','Paraguay 1657'),
+(55,'ariel','ortega','20229725481','Av. de Mayo 151'),(56,'pablo','antico','20206547814','Varela 75'),
+(57,'silvia','palavecino','27347978412','Culpina 253'),(58,'gabriela','cora','27199124584','Rivadavia 11548'),
+(59,'julio','bossero','20167848292','San Martin 546');
+
+insert into facturas (letra,numero,fecha,monto,clienteid,articuloid) values ('j',1001,'2012/10/25',350,1,2),('i',1002,curdate(),540,3,1),
+('d',0001,'2012/08/15',2500,2,2),('k',0001,'2013/08/14',950,3,2),('l',0006,'2014/07/16',1500,7,2),('m',0011,'2016/09/01',650,4,4),
+('f',0012,'2017/01/18',575,1,1),('e',0013,curdate(),520,1,1),('g',0002,'2017/01/31',2100,1,1),('h',0008,curdate(),1100,6,6);
+
+insert into articulos (articuloid,nombre,precio,stock) values (110,'destornillador phillips',30,100),(100,'cemento gris',125,50),
+(7,'llave francesa',160,68),(8,'amoladora angular',950,42),(9,'lijadora orbital',30,18),(10,'sierra manual',12,30),
+(11,'cal hidrofuga',125,46),(12,'interruptor termomagnético',1150,8),(13,'lámpara led 8w',30,130),(111,'martillo de goma',40*1.21,50);
+
+
+-- a- artículos con precio mayor a 100
+Select * from articulos where precio >= 100;
+select articuloid as codigo, upper(nombre) as nombre, precio, stock from articulos where precio> 100
+order by precio;
+
+ -- b- artículos con precio entre 20 y 40 (usar < y >)
+ select * from articulos where precio > 20 and precio < 40;
+ 
+ -- c- artículos con precio entre 40 y 60 (usar BETWEEN)
+  select * from articulos where precio between 40 and 60;
+ 
+ -- d- artículos con precio = 20 y stock mayor a 30
+   select * from articulos where precio = 20 and Stock> 30;
+   
+ -- e- artículos con precio (12,20,30) no usar IN
+ select *from articulos where precio = 12 or precio=20 or precio=30;
+ 
+-- f- artículos con precio (12,20,30) usar el IN
+  select * from articulos where precio in (12,20,30);
+  
+ -- g- artículos cuyo precio no sea (12,20,30)
+select * from articulos where precio not in (12,20,30);
+
+-- 3- Listar los artículos ordenados por precio de mayor a menor, y si hubiera precios iguales deben quedar ordenados por nombre.
+select * from articulos order by precio desc,nombre ;
+
+-- 4- Listar todos los artículos incluyendo una columna denominada precio con IVA, la cual deberá tener el monto con el iva del producto.
+select round(precio* 1.21,2)as 'precio con iva' from articulos;
+
+-- 5- Listar todos los artículos incluyendo una columna denominada “cantidad de cuotas” y otra “valor de cuota”, la cantidad es fija y es 3, el valor de cuota corresponde a 1/3 del monto con un 5% de interés
+select articuloid as codigo, stock, nombre, precio, round(precio* 1.21,2) as 'precio con iva' ,
+ 3 as 'cantidad de cuota',
+ round(precio / 3 * 1.05,2) as 'valor de la cuota'
+from articulos;
+select p.*, 'cantidad de cuotas' + 3 from lista_precios as p
+where 'valor de cuotas' > 50;
+-- el inconveniente a esto, es que no va a mostrar nada, debido a ello es mejor utilizar valor_de_cuotas, en vez de 'valor de cuotas', da problemas
+-- como en estos casos y no nos muestra nada
+
+
+-- LABORATORIO BONUS--
+
+-- 1- Elimine la tabla "agenda", si existe:
+drop table if exists agenda;
+
+-- 2- Cree una tabla llamada agenda. Debe tener la siguiente estructura:
+create table agenda(
+Contacto integer,
+Nombre varchar(20),
+Domicilio varchar(30),
+Telefono varchar(9),
+primary key (Contacto)
+);
+
+-- 3- Visualice las tablas existentes en la base de datos para verificar la creaciรณn de agenda.
+show tables;
+
+-- 4- Visualice la estructura de campos de la tabla "agenda". 
+describe agenda;
+
+-- 5- Ingrese los registros en la tabla Agenda:
+insert into agenda (Contacto, Nombre, Domicilio, Telefono) values (1, 'Alberto Mores', 'Colon 123', '4234567');
+insert into agenda (Contacto, Nombre, Domicilio, Telefono) values (2, 'Juan Torres', 'Avellaneda 135', '4458787');
+insert into agenda (Contacto, Nombre, Domicilio, Telefono) values (3, 'Carla Paez', 'Lima 2335', '6658747');
+
+-- 6- Seleccione y muestre todos los registros de la tabla:
+select * from agenda;
+
+-- 7- Elimine la tabla "agenda", si existe:
+drop table if exists agenda;
+
+--
+--
+--
+--
+--
+create table productos(
+idProducto int auto_increment primary key,
+Nombre varchar(25),
+Precio float,
+Marca varchar(25),
+Categoria varchar(25),
+Presentacion varchar(25),
+Stock int,
+Disponible boolean
+);
+
+insert into productos (Nombre ,Precio ,Marca, Categoria ,Presentacion ,Stock ,Disponible)
+values('iPhone 6', 499.99, 'Apple', 'Smartphone', '16GB', 500, true),
+('iPad Pro', 599.99, 'Apple', 'Smartphone', '128GB',300,true),
+('Nexus 7', 299.99, 'LG', 'Smartphone', '32GB', 250 ,false),
+('Galaxy S7', 459.99, 'Samsung', 'Smartphone', '64GB', 200,true),
+('Prime J4', 359.99, 'Samsung', 'Smartphone', '2GB', 80,true),
+('Impresora T23', 489.99, 'Epson' ,'Impresoras', 'Color', 180, true),
+('Impresora T33', 399 ,'Epson' ,'Impresoras', 'Color' ,200 ,false),
+('Lavarropa 7000', 1679 ,'LG', 'Lavarropas', 'Automático' ,100, true),
+('Camara Digital 760' ,649, 'Kodak', 'Fotografía', 'Sin detalle', 150,false),
+('Escaner Digital 1150' ,1459, 'Kodak', 'Multifunción', 'Sin detalle', 50,false),
+('Notebook CQ40-300', 2999 ,'HP' ,'Notebooks', 'Intel Core i3', 100, true),
+('Notebook Pavillion ', 4999 ,'HP' ,'Notebooks', 'Intel Core i7', 90, true);
+-- si ingresamos un producto con ID de 33344, el autoincrement, seguira el 33345 por siguiente, ignorando el orden anterior
+
+-- sum(), min(), max(), count() contar, avg() promedio
+select count(*) from productos;
+-- para contar la cantidad total de productos ingresados
+select count(marca) from productos;
+-- cuenta la cantidad ingresadas por mas que la marca se repita
+select count(presentacion) from productos;
+-- si llegan a existir valores NULL no CUENTA LOS VALORES NULL en una columna, ok?
+select distinct marca from productos;
+-- distinct devuelve valores unicos, sin repetir
+select count(distinct marca) 'cantidad de marcas' from productos;
+-- asi devuelve la cantidad de marcas en total contadas con count
+
+select marca, count(distinct marca) 'cantidad de marcas', count(*) 'cantidad de productos', sum(stock) 'existencia actuales'
+, min(precio) 'precio minimo', max(precio) 'precio maximo', round(avg(precio),2) 'promedio del precio', max(stock) 'stock maximo'
+from productos where marca in ('Apple' , 'Samsung');
+-- cantidad de marcas sin repetir, cantidad de productos totales, stock actual, precio maximo y minimo, promedio con 2 digitos y stock maximo
+-- PERO SOLO DEVUELE UNA FUNCION, por eso solo muestra apple, por lo tanto esta consulta ESTA MAL
+
+select marca, categoria, count(distinct marca) 'cantidad de marcas', count(*) 'cantidad de productos', sum(stock) 'existencia actuales'
+, min(precio) 'precio minimo', max(precio) precio_maximo, round(avg(precio),2) 'promedio del precio', max(stock) 'stock maximo'
+from productos where marca not in ('Apple' , 'Samsung', 'LG')
+group by marca,categoria
+having precio_maximo > 2000;
+-- en el caso del having, siempre va despues del group by, recordemos que where lo busca en la tabla y no existe, por eso usamos having
+-- Ahora si es correcto, cuando lo agrupamos, es posible agrupar por mas de 1 columna, por lo tanto esta consulta ES CORRECTA
+-- SQL primero aplica where, y despues contruye la consulta, la agrupa y finalmente coloca la condicion del having
+
+Select MIN(monto) 'Mínimo factura' From Facturas Where YEAR(fecha) Between 2011 And 2020;
+
+insert into productos (idproducto, Nombre ,Precio ,Marca, Categoria ,Presentacion ,Stock ,Disponible)values
+(13333,'Tv Led 43 "', 20000, 'BGH', 'Smart TV', null, 10, true);
+
+insert into productos (Nombre ,Precio ,Marca, Categoria ,Presentacion ,Stock ,Disponible)values
+('PS 5', 75000, 'Sony', 'Consola', null, 100, true);
+
+insert into productos (idproducto,Nombre ,Precio ,Marca, Categoria ,Presentacion ,Stock ,Disponible)values
+(15,'X Box series', 100000, 'Microsoft', 'Consola', null, 100, true);
+
+
+
+-- DML (Data Manipulation Language)
+-- Select / Insert / Update (Modificación) / Delete (Borrado)
+select * from clientes;
+insert into clientes values(7,'Juan','Calvó','20-65468351-7','',null);
+
+-- create table clientes2
+-- select * from clientes where 1 = 2;
+
+-- select * from clientes2;
+
+-- insert into clientes2 select * from clientes;
+
+create table respaldo_productos select * from productos;
+
+select * from productos;
+select * from respaldo_productos;
+
+describe productos;
+describe respaldo_productos;
+
+alter table respaldo_productos add primary key(idproducto);
+-- Modificación / Actualización / UPDATE
+update nombre_tabla set campo = valor, campo1 = valor;
+select * from productos; 
+set sql_safe_updates = false;
+-- set sql_safe_updates = 0;
+-- update productos set presentacion = '1 TB';
+
+-- Delete / Borrar
+delete from nombre_tabla;
+delete from productos;
+
+select * from productos;
+select * from respaldo_productos;
+insert into productos select * from respaldo_productos;
+
+update productos set presentacion = '1 TB' where nombre = 'Ps 5';
+update productos set precio = precio * 1.4;
+update productos set precio = round(precio,2), stock = stock + 100;
+update productos set stock = 0, disponible = false where categoria = 'Consola';
+
+delete from productos where stock = 0 and disponible = false;
+-- delete from productos;
+
+insert into productos (nombre, precio, marca, categoria, presentacion, stock, disponible)
+select nombre, precio, marca, categoria, presentacion, stock, disponible 
+from respaldo_productos;
+
+truncate table productos;
+-- borra toda la tabla pero tambien reinicia los valores incrementales, pero si quiero eliminarla completa debemos usar delete.
+
+-- LABORATORIO UPDATE - DELETE
+-- 1- Insertar 5 clientes en la tabla clientes utilizando el insert into sin utilizar campos como parte de la sentencias, es decir, de la forma simplificada.
+insert into Clientes values 
+(11, 'Pedro', 'Corso', '22-35987452-6', 'Lima 5458', NULL),
+(12, 'Mia', 'Padial', '24-37987854-9', 'Fraga 3298', NULL),
+(13, 'Sandra', 'Luna' , '21-12226498-7', 'Paez 985', NULL),
+(14, 'Joaquin', 'Maza' , '20-36564495-8', 'Loria 3695', NULL),
+(15, 'Cintia', 'Correa', '20-29632711-2', 'Rivadavia 2502', NULL);
+-- 2- Actualizar el nombre del cliente 1 a José.
+update clientes set nombre= 'Jose' where clienteid=1;
+-- 3- Actualizar el nombre apellido y cuit del cliente 3 a Pablo Fuentes 20-21053119-0.
+update clientes set nombre= 'Pablo', apellido ='Fuentes', cuit= 20-41482506-6, clieteid= 3;                
+-- 4- Actualizar todos los comentarios NULL a ‘’.
+update clientes set comentarios = '' where comentarios is null;
+-- 5- Eliminar los clientes con apellido Perez.
+delete from clientes where apellido= 'Perez';
+-- 6- Eliminar los clientes con CUIT Terminan en 0.
+-- select * from clientes where cuit like '%0'
+delete from clientes where cuit like '%0';
+-- 7- Aumentar un 20% los precios de los artículos con precio menor igual a 50.
+update articulos set precio= precio *1.15 where precio <=50;
+-- 8- Aumentar un 15% los precios de los artículos con precio mayor a 50.
+update articulos set precio= precio *1.15 where precio > 50;
+-- 9- Bajar un 5% los precios de los artículos con precio mayor a 200.
+update articulos set precio= precio *1.15 where precio >200;
+-- 10- Eliminar los artículos con stock menor a 0.
+delete from articulos where stock <0;
+
+-- ULTIMA CLASE--
+-- join
+-- select campo from tabla1 join tabla2 on tabla1.campo = tabla2.campo;
+
+select * from contacto;
+alter table contacto drop primary key;
+create table clientes select * from contacto;
+
+select * from headerventas;
+create table facturas select * from headerventas; 
+
+select * from tarjetacredito;
+create table tarjetas select * from tarjetacredito;
+
+select * from clientes limit 1;
+select * from facturas limit 1;
+select * from tarjetas limit 1;
+
+select * from facturas as f join clientes as c on f.idcontacto = c.idcontacto;
+select * from facturas as f inner join clientes as c on f.idcontacto = c.idcontacto;
+
+select count(*) from facturas;
+
+select * from facturas  f join tarjetas t on f.idtarjetacredito = t.idtarjetacredito;
+-- por que no trae la cantidad total? por que no todos usan tarjeta de credito
+
+select count(*) from facturas where idtarjetacredito= 0;
+select count(*) from facturas;
+
+select * from facturas f left join tarjetas t on f.idtarjetacredito = t.idtarjetacredito;
+-- la tabla derecha/ izquierda es donde esta del lado del join, usaremos el izquierdo y traera todos los registros sin excepcion
+-- pero no encontro el valor idtarjetacredito de los de la derecha, esas ventas son en efectivo
+-- podemos usar el right join, mientras cambies el sentido del join, sera comodo
+
+select * from tarjetas t left join facturas f on f.idtarjetacredito = t.idtarjetacredito;
+
+alter table tarjetas add primary key(idtarjetacredito);
+alter table clientes add primary key(idcontacto);
+
+create index idx_contacto on facturas(idcontacto);
+-- un indice para consultar
+
+alter table facturas add primary key(idordenventa);
+
+select * from facturas f left outer join tarjetas t on f.idtarjetacredito = t.idtarjetacredito;
+-- el resultado es el mismo
+
+select * from facturas f left join tarjetas t on f.idtarjetacredito = t.idtarjetacredito join clientes c on f.idcontacto = c.idcontacto
+where c.idcontacto = 378;
+-- ahi podemos ver un resumen de ventas por cliente!
+
+create view ResumenVentas as
+select fechaventa, subtotal, impuesto, flete, c.idcontacto, primernombre, apellido, email, t.*
+from facturas f left join tarjetas t on f.idtarjetacredito = t.idtarjetacredito join clientes c on f.idcontacto = c.idcontacto
+where c.idcontacto = 378;
+-- ahi es mas especifico lo que traemos, de tarjetas traemos todo, de clientes solo algunas cosas
+
+select * from ResumenVentas where idcontacto in (378,354,382);
+-- golazo para clientes en especifico
+
+select idcontacto, sum(subtotal) as totalvendido, count(*) cantidadventas from ResumenVentas where idcontacto in (378,354,382);
+-- la re ayuda para calculos
+
+
+-- integridad referencial
+-- evita registros huerfanos
+-- necesita tabla padre e tabla hija
+-- tabla padre tiene primary key
+-- tabla hija tiene foreign key apuntando a la PK de la tabla padre
+
+create table personas
+(
+codigo int ,
+nombre varchar(35) 
+);
+
+create table hijos(
+padre int ,
+nombre varchar(35) 
+);
+
+insert into personas values(10, 'El Diego'), (1, 'Ariel'), (2,'Maru Botana');
+insert into hijos values(22, 'Gianina'),(22, 'Dalmita'),(22,'Jana'),(22,'Diego jr'),(22,'Dieguito Fernando'),(2,'Maru1'),(2,'Maru2'),
+(2,'Maru3'),(2,'Maru4'),(2,'Maru5'),(2,'Maru6');
+
+select * from personas;
+select * from hijos;
+select * from personas left join hijos on codigo = padre;
+
+insert into hijos values(3,'Alexander El Emeperador');
+
+alter table personas add primary key(codigo);
+alter table hijos add foreign key(padre) references personas(codigo);
+
+set sql_safe_updates=0;
+delete from hijos where padre= 3;
+
+alter table hijos add foreign key(padre) references personas(codigo)
+on update cascade on delete cascade ;
+-- permito que se modifique el dato de la clave primaria del registro padre y se actualicen todos los registros que apuntaban cambien tambien
+
+insert into hijos values(3,'Alexander El Emeperador');
+-- intentamos dar de alta, y no es posible, es por que necesita un dato padre
+
+insert into personas values(3,'El pajaro caniggia');
+insert into hijos values(3,'Alexander El Emeperador');
+-- entonces una vez que creamos el resgitro padre y alli el resgistro hijo
+
+select * from personas;
+select * from hijos;
+-- corroboramos
+
+update personas set codigo= 23 where codigo=10;
+
+delete from personas where codigo=3;
+
+-- ahora vamos a database --> reverse engineer, damos siguiente hasta finalizar y podremos ver un diagrama de ayuda
+
+alter table facturas add foreign key(idcontacto) references clientes(idcontacto)
+on update cascade;
+
+alter table clientes add foreign key(idcontacto) references clientes(idcontacto)
+on update cascade;
+-- no es posible, asi que proseguimos de ver la siguiente manera
+
+alter table contactotarjetacredito add foreign key(idcontacto) references clientes(idcontacto);
+
+alter table contactotarjetacredito add foreign key(IDTarjetaCredito) references clientes(IDTarjetaCredito);
+
+-- LABORATORIO MODIFICACIÓN DE ESTRUCTURAS
+
+-- 1- Agregar la relación (FK) entre la tabla Facturas y la tabla Clientes.
+use laboratorio;
+alter table facturas add foreign key(clienteid) references clientes(clienteid);
+
+select * from facturas f left join clientes c on f.clienteid= c.clienteid;
+update facturas set clienteid=52 where letra= 'A' and clienteid=2;
+
+-- 2- Agregar la relación (FK) entre la tabla Facturas y la tabla Articulos.
+alter table facturas add foreign key(articuloid) references articulos(articuloid);
+
+-- 3- Generar un error de FK en la tabla Facturas.
+insert into factura value('A',1548,1,999,curdate(),1500);
+
+-- 4- Agregar la columna CPostal a la tabla Clientes.
+alter table clientes add Cpostal varchar(8);
+select * from clientes;
+alter table clientes add Cpostal1  varchar(8) first ;
+alter table clientes add Cpostal2  varchar(8) after cuit ;
+
+-- 5- Eliminar la columna CPostal de la tabla Clientes.
+alter table clientes drop column cpostal;
+alter table clientes drop column cpostal1;
+alter table clientes drop column cposta2;
+
+EXTRA
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- LABORATORIO CLASE 1
+-- 1- Eliminar si existe la base de datos Laboratorio.
+-- drop schema laboratorio;
+-- drop schema if exists laboratorio;
+
+drop database if exists laboratorio;
+
+-- 2- Crear la base de datos Laboratorio.
+
+create database laboratorio;
+
+-- 3- Crear la tabla Facturas dentro de la base de datos con la 
+-- siguiente estructura:
+-- ● PK significa Primary Key.
+-- ● Observar que se está declarando una clave primaria compuesta; 
+-- es decir (Letra, Numero), cada campo por sí solo no es clave, ni
+-- tampoco identifica al registro, pero la combinación de los dos 
+-- forman la clave.
+use laboratorio;
+create table FACTURAS(
+Letra char(1),
+Numero integer unsigned,
+ClienteID integer unsigned not null,
+ArticuloID integer unsigned not null,
+Fecha date not null,
+Monto double not null,
+primary key(letra, numero)
+);
+
+--  4- Crear la tabla Articulos dentro de la base de datos con la 
+-- siguiente estructura:
+create table ARTICULOS(
+ArticuloID integer unsigned Primary key,
+Nombre varchar(50) not null,
+Precio double,
+Stock integer unsigned not null 
+);
+-- 5- Crear la tabla Clientes dentro de la base de datos con la 
+-- siguiente estructura:
+
+create table CLIENTES(
+ClienteID integer unsigned Primary Key,
+Nombre varchar(50) not null,
+Apellido varchar(50),
+Cuit char(16),  
+Direccion varchar(50) not null,
+Comentarios varchar(50)
+);
+-- 6- Cargar 5 registros en las tablas Facturas, 
+-- Articulos y Clientes.
+
+insert into facturas (letra, numero, clienteid, articuloid, fecha, monto)
+values ('A',1,1,1,'2016-08-12',1500.50);
+
+insert into articulos (articuloid, nombre, stock, precio) values
+(1,'Martillo de goma',25,250.75);
+
+insert into clientes (clienteid, nombre, direccion) values
+(1,'Brenda Escobar','Santa Fé 1548');
+
+insert into clientes (clienteid, nombre, direccion) values
+(1,'Juan Calvo','Paraguay 1657'); 
+
+use laboratorio;
+insert into facturas(Letra, Numero, ClienteID, ArticuloID, Fecha, Monto) values 
+('B', 1, 1, 1, '2011/10/18', 500),
+('A', 2, 2, 2, '2011/10/18', 2500),
+('A', 3, 3, 3, '2011/10/18', 320),
+('A', 4, 4, 4, '2011/10/18', 120),
+('A', 5, 5, 5, curdate(), 300);
+
+-- curdate() >> current date >> fecha actual
+select curdate();
+select curtime();
+
+insert into articulos(ArticuloID, Nombre, Precio, Stock) values 
+(6, 'Destornillador', 25, 50),
+(2, 'Pinza', 35, 22),
+(3, 'Martillo', 15, 28),
+(4, 'Maza', 35, 18),
+(5, 'Balde', 55, 13);
+
+insert into Clientes (ClienteID, Nombre, Apellido, Cuit, Direccion, Comentarios) values 
+(6, 'Agustin', 'Diaz', '20-35987452-0', 'Lima 458', NULL),
+(2, 'Angela', 'Lopez', '20-37987854-0', 'Peru 32', NULL),
+(3, 'Cristian', 'Fraga', '20-36887498-0', 'Chile 6985', NULL),
+(4, 'Sol', 'Cabral', '20-25982495-0', 'Lavalle 1201', NULL),
+(5, 'Ezequiel', 'Perez', '20-21987111-0', 'Uruguay 25', NULL);
+
+-- Clase 2
+SELECT * FROM laboratorio.clientes;
+SELECT * FROM clientes;
+-- SELECT * FROM curso_lunes.alumnos;
+SELECT * FROM clientes;
+SELECT nombre, apellido, cuit FROM clientes;
+SELECT concat(nombre, apellido), cuit FROM clientes;
+SELECT concat(nombre,' ',apellido), cuit FROM clientes;
+SELECT concat(nombre,' ',apellido) as 'Nombre del cliente', cuit FROM clientes;
+SELECT concat(nombre,' ',apellido) Nombre_del_cliente, cuit FROM clientes;
+
+select a.*, 
+round(precio * 1.21, 2) as precio_con_iva, 
+stock + 100 as stock_final, 
+round(precio * 0.9,2) as precio_descuento, 
+round(precio * 2.5 * 0.90,0) as 'precio black friday compre ya !!!!', 
+'China' as Origen 
+from articulos as a;
+
+select * from facturas;
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia from facturas;
+
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia from facturas where dia <16;
+
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia from facturas where day(fecha)  > 15;
+
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia from facturas where year(fecha) = 2011;
+
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia from facturas where year(fecha) <> 2011;
+
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia from facturas where year(fecha) != 2011 and monto > 1000;
+
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia from facturas where year(fecha) != 2011 or monto > 1000;
+
+select * from clientes where apellido = 'lopez' or apellido ='cabral' or apellido = 'fraga';
+select * from clientes where apellido = 'lopez' and apellido ='cabral' and apellido = 'fraga';
+
+select * from clientes where apellido in ('lopez','cabral','fraga','escobar');
+select * from clientes where apellido not in ('lopez','cabral','fraga','escobar');
+
+select * from clientes where clienteid in (1, 3, 5);
+
+-- select * from clientes where clienteid >= 3 or clienteid <=5;
+select * from clientes where clienteid >= 3 and clienteid <=5;
+select * from clientes where clienteid between 3 and 5;
+
+select * from clientes where clienteid <=5 and clienteid >=3;
+select * from clientes where clienteid > 3 and clienteid < 5;
+
+select * from clientes where clienteid not between 3 and 5;
+
+select * from facturas;
+
+select monto, fecha, year(fecha) as Año, month(fecha) as Mes, day(fecha) as Dia,
+case 
+	when day(fecha) < 16 then '1° Quincena'
+	else '2° Quincena'
+end Quincena,
+case
+	when month(fecha) between 1 and 3 then 1
+    when month(fecha) between 4 and 6 then 2
+    when month(fecha) between 7 and 9 then 3
+    else 4
+end Trimestre
+from facturas;
+
+-- LABORATORIO CLASE 2
+-- 1 - Llenar las tablas artículos, clientes y facturas con 5 registros cada una.
+insert into clientes (clienteid,nombre,apellido,cuit,direccion) values 
+(50,'jose','benuto','20364749354','Loria 940'),
+(51,'gladys','acosta','27248959092','Belaustegui 2755'),
+(52,'axel','garcia','20347985412','Cramer 1653'),
+(53,'emilia','baudino','27389983584','Santa Fe 1548'),
+(54,'diego','iogna','20255788292','Paraguay 1657'),
+(55,'ariel','ortega','20229725481','Av. de Mayo 151'),
+(56,'pablo','antico','20206547814','Varela 75'),
+(57,'silvia','palavecino','27347978412','Culpina 253'),
+(58,'gabriela','cora','27199124584','Rivadavia 11548'),
+(59,'julio','bossero','20167848292','San Martin 546');
+
+insert into facturas (letra,numero,fecha,monto,clienteid,articuloid) values 
+('a',1001,'2012/10/25',350,1,2),
+('a',1002,curdate(),540,3,1),
+('c',0001,'2012/08/15',2500,2,3),
+('b',0002,'2013/08/14',950,3,2),
+('b',0006,'2014/07/16',1500,7,3),
+('a',0011,'2016/09/01',650,4,4),
+('a',0012,'2017/01/18',575,1,5),
+('a',0013,curdate(),520,1,1),
+('c',0002,'2017/01/31',2100,1,5),
+('c',0008,curdate(),1100,6,6);
+
+insert into articulos (articuloid,nombre,precio,stock) values 
+(110,'destornillador phillips',30,100),
+(14,'cemento gris',125,50),
+(7,'llave francesa',160,68),
+(8,'amoladora angular',950,42),
+(9,'lijadora orbital',30,18),
+(10,'sierra manual',12,30),
+(11,'cal hidrofuga',125,46),
+(12,'interruptor termomagnético',1150,8),
+(13,'lámpara led 8w',30,130),
+(111,'martillo de goma',40*1.21,50);
+
+-- 2 - Basándose en la tabla artículos obtener los siguientes listados.
+ -- a- artículos con precio mayor a 100
+ select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock from articulos where precio > 100 order by precio desc;
+ -- b- artículos con precio entre 20 y 40 (usar < y >)
+ select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock from articulos where precio > 20 and precio < 40;
+ -- c- artículos con precio entre 40 y 60 (usar BETWEEN)
+ select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock from articulos where precio between 40 and 60;
+ -- d- artículos con precio = 20 y stock mayor a 30
+ select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock from articulos where precio = 20 and stock > 30;
+ -- e- artículos con precio (12,20,30) no usar IN
+ select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock from articulos where precio = 12 or precio = 20 or precio = 30;
+ -- f- artículos con precio (12,20,30) usar el IN
+ select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock from articulos where precio in(12,20,30);
+ -- g- artículos cuyo precio no sea (12,20,30)
+ select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock from articulos where precio not in(12,20,30);
+ 
+ select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock from articulos where precio !=12 and precio <> 20 and precio <>30;
+ 
+-- 3- Listar los artículos ordenados por precio de mayor a menor, y si hubiera precios iguales deben quedar ordenados por nombre.
+select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock from articulos order by precio desc, nombre;
+
+-- 4- Listar todos los artículos incluyendo una columna denominada precio con IVA, la cual deberá tener el monto con el iva del producto.
+select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock, 
+round(precio * 1.21, 2) as 'Precio con IVA'
+from articulos;
+
+-- 5- Listar todos los artículos incluyendo una columna denominada “cantidad de cuotas” y otra “valor de cuota”, la cantidad es fija y es 3, el valor de cuota corresponde a 1/3 del monto con un 5% de interés.
+select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock, 
+3 as 'Cantidad de cuotas',
+round(precio / 3 * 1.05, 2) as 'Valor de cuota'
+from articulos;
+
+create table Lista_precios
+select articuloid as Codigo, upper(nombre) as Nombre, Precio, Stock, 
+3 as 'Cantidad de cuotas',
+round(precio / 3 * 1.05, 2) as 'Valor de cuota'
+from articulos;
+
+select p.*, 'cantidad de cuotas' + 3 from lista_precios as p;
+
+use laboratorio;
+
+select p.*, 'cantidad de cuotas' + 3 from lista_precios as p;
+
+-- Clase 3
+-- Funciones de Agregación / Agrupamiento de consultas 
+create table productos(
+idProducto int auto_increment primary key,
+Nombre varchar(25),
+Precio float,
+Marca varchar(25),
+Categoria varchar(25),
+Presentacion varchar(25),
+Stock int,
+Disponible boolean
+);
+
+insert into productos (Nombre ,Precio ,Marca, Categoria ,Presentacion ,Stock ,Disponible)values('iPhone 6', 499.99, 'Apple', 'Smartphone', '16GB', 500, true),
+('iPad Pro', 599.99, 'Apple', 'Smartphone', '128GB',300,true),
+('Nexus 7', 299.99, 'LG', 'Smartphone', '32GB', 250 ,false),
+('Galaxy S7', 459.99, 'Samsung', 'Smartphone', '64GB', 200,true),
+('Prime J4', 359.99, 'Samsung', 'Smartphone', '2GB', 80,true),
+('Impresora T23', 489.99, 'Epson' ,'Impresoras', 'Color', 180, true),
+('Impresora T33', 399 ,'Epson' ,'Impresoras', 'Color' ,200 ,false),
+('Lavarropa 7000', 1679 ,'LG', 'Lavarropas', 'Automático' ,100, true),
+('Camara Digital 760' ,649, 'Kodak', 'Fotografía', 'Sin detalle', 150,false),
+('Escaner Digital 1150' ,1459, 'Kodak', 'Multifunción', 'Sin detalle', 50,false),
+('Notebook CQ40-300', 2999 ,'HP' ,'Notebooks', 'Intel Core i3', 100, true),
+('Notebook Pavillion ', 4999 ,'HP' ,'Notebooks', 'Intel Core i7', 90, true);
+
+select * from productos;
+
+insert into productos (idproducto, Nombre ,Precio ,Marca, Categoria ,Presentacion ,Stock ,Disponible)values
+(13333,'Tv Led 43 "', 20000, 'BGH', 'Smart TV', null, 10, true);
+
+insert into productos (Nombre ,Precio ,Marca, Categoria ,Presentacion ,Stock ,Disponible)values
+('PS 5', 75000, 'Sony', 'Consola', null, 100, true);
+
+insert into productos (idproducto,Nombre ,Precio ,Marca, Categoria ,Presentacion ,Stock ,Disponible)values
+(15,'X Box series', 100000, 'Microsoft', 'Consola', null, 100, true);
+
+-- sumar(), contar(), minimo(), maximo(), promedio()
+-- sum()    count()   min()     max()     avg()
+select * from productos;
+select count(*) 'Cantidad de registros' from productos;
+select count(marca) 'Cantidad de registros' from productos;
+select count(presentacion) 'Cantidad de registros' from productos;
+select distinct marca from productos;
+select count(distinct marca) 'Cantidad de marcas' from productos;
+
+select count(distinct marca) 'Cantidad de marcas', count(*) 'Cantidad de Productos',
+sum(stock) 'Existencias totales', min(precio) 'Precio Mínimo', max(precio) 'Precio Máximo', 
+round(avg(precio),2) 'Precio Promedio', max(Stock) 'Stock Maximo'
+from productos;
+
+select marca, count(distinct marca) 'Cantidad de marcas', count(*) 'Cantidad de Productos',
+sum(stock) 'Existencias totales', min(precio) 'Precio Mínimo', max(precio) 'Precio Máximo', 
+round(avg(precio),2) 'Precio Promedio', max(Stock) 'Stock Maximo'
+from productos where marca='Apple';
+
+select marca, count(distinct marca) 'Cantidad de marcas', count(*) 'Cantidad de Productos',
+sum(stock) 'Existencias totales', min(precio) 'Precio Mínimo', max(precio) 'Precio Máximo', 
+round(avg(precio),2) 'Precio Promedio', max(Stock) 'Stock Maximo'
+from productos where marca in ('Apple','samsung','sony');
+
+select marca, count(distinct marca) 'Cantidad de marcas', count(*) 'Cantidad de Productos',
+sum(stock) 'Existencias totales', min(precio) 'Precio Mínimo', max(precio) 'Precio Máximo', 
+round(avg(precio),2) 'Precio Promedio', max(Stock) 'Stock Maximo'
+from productos 
+where marca in ('Apple','samsung','sony')
+group by marca;
+-- la consulta siguiente esta MAL !!!!!
+select marca, count(distinct marca) 'Cantidad de marcas', count(*) 'Cantidad de Productos',
+sum(stock) 'Existencias totales', min(precio) 'Precio Mínimo', max(precio) 'Precio Máximo', 
+round(avg(precio),2) 'Precio Promedio', max(Stock) 'Stock Maximo'
+from productos 
+where marca in ('Apple','samsung','sony')
+group by categoria;
+-- Se puede agrupar por mas de 1 columna
+select marca, categoria ,count(distinct marca) 'Cantidad de marcas', count(*) 'Cantidad de Productos', sum(stock) 'Existencias totales', min(precio) 'Precio Mínimo', max(precio) 'Precio Máximo', round(avg(precio),2) 'Precio Promedio', max(Stock) 'Stock Maximo' 
+from productos 
+-- where marca in ('Apple','samsung','sony')
+group by marca, categoria;
+
+select marca, categoria, count(distinct marca) Cantidad_de_marcas, count(*) Cantidad_de_Productos, sum(stock) Existencias_totales, min(precio) Precio_Minimo, max(precio) Precio_Maximo, round(avg(precio),2) Precio_Promedio, max(Stock) Stock_Maximo from productos 
+-- where marca not in ('Apple','samsung','sony')
+where marca not in ('Apple','samsung','sony') 
+-- and precio_maximo > 20000
+group by marca, categoria
+having precio_maximo > 2000;
+
+select marca, categoria ,count(distinct marca) Cantidad_de_marcas, count(*) Cantidad_de_Productos, sum(stock) Existencias_totales, min(precio) Precio_Minimo, max(precio) Precio_Maximo, round(avg(precio),2) Precio_Promedio, max(Stock) Stock_Maximo 
+from productos 
+-- where marca not in ('Apple','samsung','sony')
+-- where marca not in ('Apple','samsung','sony') 
+-- and precio_maximo > 20000
+group by marca, categoria
+having precio_maximo > 2000 and marca not in ('Apple','samsung','sony');
+
+-- LABORATORIO FUNCIONES
+-- 1- Obtener el monto máximo de factura.
+select max(monto) 'Monto máximo' from facturas;
+
+-- Consulta de comprobacion
+-- select distinct monto from facturas order by monto desc;
+
+-- 2- Obtener el monto mínimo de factura.
+select min(monto) 'Monto mínimo' from facturas;
+
+-- 3- Obtener el monto mínimo de factura entre los años 2011 y 2020.
+select min(monto) 'Monto mínimo' from facturas where 
+year(fecha) between 2011 and 2020;
+
+select min(monto) 'Monto mínimo' from facturas where 
+fecha between '2011-01-01' and '2020-12-31';
+
+-- 4- Obtener el monto promedio de factura.
+select round(avg(monto), 2) 'Monto Promedio' from facturas;
+
+-- 5- Obtener la factura con el monto promedio del año 2011.
+select round(avg(monto), 2) 'Monto Promedio' from facturas
+where year(fecha) = 2011;
+
+-- 6- Obtener la cantidad de facturas.
+select count(*) 'Cantidad de Facturas' from facturas;
+
+-- 7- Obtener la cantidad de facturas que tienen un monto entre $500 y $3.300.
+select count(*) 'Cantidad de Facturas' from facturas where monto between 500 and 3300;
+
+-- 8- Obtener la cantidad de facturas que hay en cada año.
+select year(fecha) Año, count(*) 'Cantidad de Facturas' from facturas
+group by year(fecha);
+
+-- 9- Obtener la cantidad de facturas y el monto promedio en cada año.
+select year(fecha) Año, count(*) 'Cantidad de Facturas', round(avg(monto),2) Promedio from facturas
+group by year(fecha);
+
+-- 10- Obtener la suma del monto y el promedio de las facturas según la letra.
+select upper(Letra) Letra, sum(monto) 'Total Vendido', round(avg(monto),2) Promedio, 
+count(*) Cantidad from facturas
+group by Letra;
+
+-- DML (Data Manipulation Language)
+-- Select / Insert / Update (Modificación) / Delete (Borrado)
+select * from clientes;
+insert into clientes values(7,'Juan','Calvó','20-65468351-7','',null);
+
+create table clientes2
+select * from clientes where 1 = 2;
+
+select * from clientes2;
+
+insert into clientes2 select * from clientes;
+
+create table respaldo_productos select * from productos;
+
+select * from productos;
+select * from respaldo_productos;
+
+describe productos;
+describe respaldo_productos;
+
+alter table respaldo_productos add primary key(idproducto);
+-- Modificación / Actualización / UPDATE
+update nombre_tabla set campo = valor, campo1 = valor;
+select * from productos; 
+set sql_safe_updates = false;
+-- set sql_safe_updates = 0;
+update productos set presentacion = '1 TB';
+
+-- Delete / Borrar
+delete from nombre_tabla;
+delete from productos;
+
+select * from productos;
+select * from respaldo_productos;
+insert into productos select * from respaldo_productos;
+
+update productos set presentacion = '1 TB' where nombre = 'Ps 5';
+update productos set precio = precio * 1.4;
+update productos set precio = round(precio,2), stock = stock + 100;
+update productos set stock = 0, disponible = false where categoria = 'Consola';
+
+delete from productos where stock = 0 and disponible = false;
+delete from productos;
+
+insert into productos (nombre, precio, marca, categoria, presentacion, stock, disponible)
+select nombre, precio, marca, categoria, presentacion, stock, disponible 
+from respaldo_productos;
+
+truncate table productos;
+
+-- LABORATORIO UPDATE - DELETE
+-- 1- Insertar 5 clientes en la tabla clientes utilizando el insert into sin utilizar campos como parte de la sentencias, es decir, de la forma simplificada.
+
+-- 2- Actualizar el nombre del cliente 1 a José.
+ -- select * from clientes where clienteid = 1;
+
+update clientes set nombre = 'José' where clienteid = 1;
+-- 3- Actualizar el nombre apellido y cuit del cliente 3 a Pablo Fuentes 20-21053119-0.
+
+update clientes set nombre = 'Pablo', apellido = 'Fuentes', cuit = '20-21053119-0' where clienteid = 3;
+-- 4- Actualizar todos los comentarios NULL a ‘’.
+-- select * from clientes where comentarios is null;
+update clientes set comentarios = '' where comentarios is null;
+
+-- 5- Eliminar los clientes con apellido Perez.
+delete from clientes where apellido = 'Perez';
+
+-- 6- Eliminar los clientes con CUIT Terminan en 0.
+-- select * from clientes where cuit like '%0';
+delete from clientes where cuit like '%0';
+
+-- 7- Aumentar un 20% los precios de los artículos con precio menor igual a 50.
+update articulos set precio = precio * 1.20 where precio <= 50;
+
+-- 8- Aumentar un 15% los precios de los artículos con precio mayor a 50.
+update articulos set precio = precio * 1.15 where precio > 50;
+
+-- 9- Bajar un 5% los precios de los artículos con precio mayor a 200.
+update articulos set precio = precio * 0.95 where precio > 200;
+
+-- 10- Eliminar los artículos con stock menor a 0.
+delete from articulos where stock < 0;
+
+-- clase 4
+-- join 
+-- select campos from tabla1 join tabla2 on tabla1.campo = tabla2.campo;
+
+select * from contacto;
+alter table contacto drop primary key;
+
+create table clientes select * from contacto;
+
+select * from headerventas;
+create table facturas select * from headerventas; 
+
+select * from tarjetacredito;
+create table tarjetas select * from tarjetacredito;
+
+select * from clientes limit 1;
+select * from facturas limit 1;
+
+select * from facturas join clientes on idcontacto = idcontacto;
+select * from facturas join clientes on facturas.idcontacto = clientes.idcontacto;
+
+select * from facturas as f join clientes as c on f.idcontacto = c.idcontacto;
+
+select * from facturas as f inner join clientes as c on f.idcontacto = c.idcontacto;
+
+select * from facturas f join tarjetas t on f.idtarjetacredito = t.idtarjetacredito;
+
+select count(*) from facturas where idtarjetacredito = 0;
+
+select 1131 + 30334;
+select count(*) from facturas;
+
+select * from facturas f left join tarjetas t on f.idtarjetacredito = t.idtarjetacredito;
+
+select * from facturas as f join clientes as c on f.idcontacto = c.idcontacto;
+
+create index idx_contacto on facturas(idcontacto);
+alter table facturas add primary key(idordenventa);
+
+alter table clientes add primary key(idcontacto);
+
+select * from tarjetas t left join facturas f on f.idtarjetacredito = t.idtarjetacredito;
+
+alter table tarjetas add primary key(idtarjetacredito);
+
+select * from facturas f left outer join tarjetas t on f.idtarjetacredito = t.idtarjetacredito;
+
+select * from tarjetas t right outer join facturas f on f.idtarjetacredito = t.idtarjetacredito;
+
+
+create view ResumenVentas as
+select fechaventa, subtotal, impuesto, flete, c.idcontacto, primernombre, apellido, email, t.* 
+from facturas f left join tarjetas t on f.idtarjetacredito = t.idtarjetacredito join clientes c on f.idcontacto = c.idcontacto;
+
+select idcontacto, sum(subtotal) as TotalVendido, count(*) CantidadVentas from resumenventas where idcontacto in(378,354,382) group by idcontacto;
+
+-- integridad referencial
+-- evita registros huerfanos
+-- necesita tabla padre y tabla hija
+-- tabla padre tiene primary key
+-- tabla hija tiene foreign key apuntando a la pk de la tabla padre
+
+create table personas(
+codigo int, nombre varchar(25)
+);
+create table hijos(
+padre int, nombre varchar(25) 
+);
+insert into personas values(10,'El Diego'),(1,'Ariel'),(2,'Maru Botana');
+insert into hijos values(10,'Gianina'),(10,'Dalmita'),(10,'Jana'),
+(10,'Diego Jr'),(10,'Dieguito Fernando'),
+(2,'Maru1'),(2,'Maru2'),(2,'Maru3'),(2,'Maru4'),(2,'Maru5'),(2,'Maru6');
+
+select * from personas;
+select * from hijos;
+
+select * from personas left join hijos on codigo = padre;
+
+insert into hijos values(3,'Alexander El Emperador');
+
+alter table personas add primary key(codigo);
+alter table hijos add foreign key(padre) references personas(codigo);
+
+set sql_safe_updates = 0;
+delete from hijos where padre=3;
+
+alter table hijos add foreign key(padre) references personas(codigo) 
+on update cascade on delete cascade;
+
+insert into hijos values(3,'Alexander El Emperador');
+insert into personas values(3,'El Pajaro Caniggia');
+insert into hijos values(3,'Alexander El Emperador');
+
+select * from personas;
+select * from hijos;
+
+update personas set codigo = 22 where codigo = 10;
+
+delete from personas where codigo=3;
+
+alter table facturas add foreign key(idcontacto) references clientes(idcontacto) on update cascade;
+
+alter table contactotarjetacredito add foreign key(idcontacto) references clientes(idcontacto);
+alter table contactotarjetacredito add foreign key(idtarjetacredito) references tarjetas(idtarjetacredito);
+
+use laboratorio;
+-- LABORATORIO MODIFICACIÓN DE ESTRUCTURAS
+-- 1- Agregar la relación (FK) entre la tabla Facturas y la tabla Clientes.
+alter table facturas add foreign key(clienteid) references clientes(clienteid);
+
+select * from facturas f left join clientes c on f.clienteid = c.clienteid;
+update facturas set clienteid=52 where letra='A' and clienteid=2;
+update facturas set clienteid=53 where letra='A' and clienteid=3;
+update facturas set clienteid=54 where letra='A' and clienteid=4;
+update facturas set clienteid=55 where letra='A' and clienteid=5;
+update facturas set clienteid=52 where letra='b' and clienteid=2;
+update facturas set clienteid=53 where letra='b' and clienteid=3;
+update facturas set clienteid=56 where letra='c';
+
+-- 2- Agregar la relación (FK) entre la tabla Facturas y la tabla Articulos.
+alter table facturas add foreign key(articuloid) references articulos(articuloid);
+
+-- 3- Generar un error de FK en la tabla Facturas.
+insert into facturas values('A',1548,1,999,curdate(),1500);
+
+-- 4- Agregar la columna CPostal a la tabla Clientes.
+alter table clientes add CPostal char(8);
+alter table clientes add CPostal1 char(8) first;
+alter table clientes add CPostal2 char(8) after cuit;
+
+select * from clientes;
+
+-- 5- Eliminar la columna CPostal de la tabla Clientes.
+alter table clientes drop cpostal; 
+alter table clientes drop cpostal1; 
+alter table clientes drop cpostal2; 
+----------------------------------------------------------------------------------------------------------------------------------------------
+-- 1.	Crear una base de datos llamada librería.
+
+CREATE DATABASE libreria;
+
+-- 2.	Crear cada una de las tablas utilizando la sentencia CREATE del subconjunto de sentencias DDL (Data Definition Language) del lenguaje SQL.
+
+USE libreria;
+
+CREATE TABLE autores(
+  autor_id varchar(11),
+  apellido varchar(40),
+  nombre varchar(20),
+  telefono varchar(12),
+  direccion varchar(40),
+  ciudad varchar(20),
+  provincia char(2),
+  c_postal char(5),
+  estado tinyint(1)
+);
+CREATE TABLE editoriales(
+  editorial_id char(4),
+  nombre varchar(40),
+  ciudad varchar(20),
+  provincia char(2),
+  pais varchar(30)
+);
+CREATE TABLE empleados(
+  empleado_id char(9),
+  nombre varchar(20),
+  apellido varchar(30),
+  puesto_id smallint,
+  editorial_id char(4),
+  fecha_ingreso datetime
+);
+CREATE TABLE libroautor(
+  autor_id varchar(11),
+  libro_id varchar(6)
+);
+CREATE TABLE libros(
+  libro_id varchar(6),
+  titulo varchar(80),
+  categoria char(12),
+  editorial_id char(4),
+  precio double,
+  comentarios varchar(200),
+  fecha_publicacion datetime
+);
+CREATE TABLE locales(
+  local_id char(4),
+  nombre varchar(40),
+  direccion varchar(40),
+  ciudad varchar(20),
+  provincia char(2),
+  c_postal char(5)
+);
+CREATE TABLE puestos(
+  puesto_id smallint,
+  descripcion varchar(50)
+);
+CREATE TABLE ventas(
+  local_id char(4),
+  factura_nro varchar(20),
+  fecha datetime,
+  cantidad smallint,
+  forma_pago varchar(12),
+  libro_id varchar(6)
+);
+
+-- 3.	Una vez creadas todas las tablas, insertar un conjunto de registros en cada una de ellas, utilizando el script provisto en la sección de descargas.
+
+INSERT INTO autores VALUES 
+('172-32-1176','Quiroga','Horacio','44967223','','Salto','ER','4025',1),
+('213-46-8915','Bioy Casares','Adolfo','49867020','','Buenos Aires','CF','4618',1),
+('238-95-7766','Vargas LLosa','Mario','45487723','','Lima','LI','4705',1),
+('267-41-2394','Giardinelli','Mempo','42862428','','Resistencia','CH','5128',1),
+('274-80-9391','Ocampo','Victoria','48342919','','Beccar','BA','4609',1),
+('341-22-1782','Walsh','Rodolfo','98430462','','Choele Choel','R','6044',0),
+('409-56-7008','Lugones','Leopoldo','46589932','','Río Seco','CO','4705',1),
+('427-17-2319','Echeverría','Esteba','48367128','','','','',1),
+('472-27-2349','Kafka','Frank','79386445','','Praga','AU','5428',1),
+('486-29-1786','Sábato','Ernesto','45854620','','Rojas','BA','4130',1),
+('527-72-3246','Borges','Jorge Luis','62972723','','Buenos Aires','CF','7215',0),
+('648-92-1872','Martinez','Tomas Eloy','57456402','','San Miguel','TU','7330',1),
+('672-71-3249','Arlt','Roberto','49354228','','Flores','CF','4595',1),
+('712-45-1867','Dolina','Alejandro','69968275','','Morse','BA','8105',1),
+('722-51-5454','Pigna','Felipe','25479982','','Mercedes','BA','6403',1),
+('724-08-9931','Cortazar','Julio','48432991','','Ixelles','BE','4609',0),
+('724-80-9391','Piglia','Ricardo','43547128','','Adrogué','BA','4612',1),
+('756-30-7391','Saer','Juan José','45349219','','Serodino','SF','4609',1),
+('807-91-6654','Ocampo','Silvina','39468853','','Microcentro','CF','8853',1),
+('846-92-7186','Puig','Manuel','48367128','','General Villegas','BA','4301',1),
+('893-72-1158','Hernández','José','74484982','','Chacras de Perdirel','BA','5688',0),
+('899-46-2035','Di Benedetto','Antonio','88260752','','Bermejo','ME','4152',1),
+('998-72-3567','Fogwill','Rodolfo','49810752','','Quilmes','BA','4152',1);
+
+INSERT INTO editoriales VALUES 
+('0736','Losada','Buenos Aires','CF','Argentina'),
+('0877','Ediciones de la Flor','Buenos Aires','CF','Argentina'),
+('1389','Abeledo-Perrot','Buenos Aires','CF','Argentina'),
+('1622','Amorrortu Editores','Buenos Aires','CF','Argentina'),
+('1756','Editorial Atlántida','Buenos Aires','CF','Argentina'),
+('9901','Centro Editor de América Latina','Buenos Aires','CF','Argentina'),
+('9952','Editorial Columba','Buenos Aires','CF','Argentina'),
+('9999','Editorial Emecé','Buenos Aires','CF','Argentina');
+
+INSERT INTO empleados VALUES 
+('PMA42628M','Paolo','Accorti',13,'0877','1992-08-27 00:00:00'),
+('PSA89086M','Pedro','Afonso',14,'1389','1990-12-24 00:00:00'),
+('VPA30890F','Victoria','Ashworth',6,'0877','1990-09-13 00:00:00'),
+('H-B39728F','Hele','Bennett',12,'0877','1989-09-21 00:00:00'),
+('L-B31947F','Lesley','Brow',7,'0877','1991-02-13 00:00:00'),
+('F-C16315M','Francisco','Chang',4,'9952','1990-11-03 00:00:00'),
+('PTC11962M','Philip','Cramer',2,'9952','1989-11-11 00:00:00'),
+('A-C71970F','Aria','Cruz',10,'1389','1991-10-26 00:00:00'),
+('AMD15433F','An','Devo',3,'9952','1991-07-16 00:00:00'),
+('ARD36773F','Anabela','Domingues',8,'0877','1993-01-27 00:00:00'),
+('PHF38899M','Peter','Franke',10,'0877','1992-05-17 00:00:00'),
+('PXH22250M','Paul','Henriot',5,'0877','1993-08-19 00:00:00'),
+('CFH28514M','Carlos','Hernandez',5,'9999','1989-04-21 00:00:00'),
+('PDI47470M','Palle','Ibse',7,'0736','1993-05-09 00:00:00'),
+('KJJ92907F','Karla','Jablonski',9,'9999','1994-03-11 00:00:00'),
+('KFJ64308F','Kari','Josephs',14,'0736','1992-10-17 00:00:00'),
+('MGK44605M','Matti','Karttune',6,'0736','1994-05-01 00:00:00'),
+('POK93028M','Pirkko','Koskitalo',10,'9999','1993-11-29 00:00:00'),
+('JYL26161F','Janine','Labrune',5,'9901','1991-05-26 00:00:00'),
+('M-L67958F','Maria','Larsso',7,'1389','1992-03-27 00:00:00'),
+('Y-L77953M','Yoshi','Latimer',12,'1389','1989-06-11 00:00:00'),
+('LAL21447M','Laurence','Lebiha',5,'0736','1990-06-03 00:00:00'),
+('ENL44273F','Elizabeth','Lincol',14,'0877','1990-07-24 00:00:00'),
+('PCM98509F','Patricia','McKenna',11,'9999','1989-08-01 00:00:00'),
+('R-M53550M','Roland','Mendel',11,'0736','1991-09-05 00:00:00'),
+('RBM23061F','Rita','Muller',5,'1622','1993-10-09 00:00:00'),
+('HAN90777M','Helvetius','Nagy',7,'9999','1993-03-19 00:00:00'),
+('TPO55093M','Timothy','O\'Rourke',13,'0736','1988-06-19 00:00:00'),
+('SKO22412M','Sve','Ottlieb',5,'1389','1991-04-05 00:00:00'),
+('MAP77183M','Miguel','Paolino',11,'1389','1992-12-07 00:00:00'),
+('PSP68661F','Paula','Parente',8,'1389','1994-01-19 00:00:00'),
+('M-P91209M','Manuel','Pereira',8,'9999','1989-01-09 00:00:00'),
+('MJP25939M','Maria','Pontes',5,'1756','1989-03-01 00:00:00'),
+('M-R38834F','Martine','Rance',9,'0877','1992-02-05 00:00:00'),
+('DWR65030M','Diego','Roel',6,'1389','1991-12-16 00:00:00'),
+('A-R89858F','Annette','Roulet',6,'9999','1990-02-21 00:00:00'),
+('MMS49649F','Mary','Saveley',8,'0736','1993-06-29 00:00:00'),
+('CGS88322F','Carine','Schmitt',13,'1389','1992-07-07 00:00:00'),
+('MAS70474F','Margaret','Smith',9,'1389','1988-09-29 00:00:00'),
+('HAS54740M','Howard','Snyder',12,'0736','1988-11-19 00:00:00'),
+('MFS52347M','Marti','Sommer',10,'0736','1990-04-13 00:00:00'),
+('GHT50241M','Gary','Thomas',9,'0736','1988-08-09 00:00:00'),
+('DBT39435M','Daniel','Tonini',11,'0877','1990-01-01 00:00:00');
+
+INSERT INTO libroautor VALUES 
+('172-32-1176','PS3333'),
+('213-46-8915','BU1032'),
+('213-46-8915','BU2075'),
+('238-95-7766','PC1035'),
+('267-41-2394','BU1111'),
+('267-41-2394','TC7777'),
+('274-80-9391','BU7832'),
+('409-56-7008','BU1033'),
+('427-17-2319','PC8888'),
+('472-27-2349','TC7778'),
+('486-29-1786','PC9999'),
+('486-29-1786','PS7777'),
+('648-92-1872','TC4203'),
+('672-71-3249','TC7779'),
+('712-45-1867','MC2222'),
+('722-51-5454','MC3021'),
+('724-80-9391','BU1112'),
+('724-80-9391','PS1372'),
+('756-30-7391','PS1373'),
+('807-91-6654','TC3218'),
+('846-92-7186','PC8889'),
+('899-46-2035','MC3022'),
+('899-46-2035','PS2091'),
+('998-72-3567','PS2092'),
+('998-72-3567','PS2106');
+
+INSERT INTO libros VALUES 
+('BU1032','La invención de Morel','Novelas','1389',19.99,'','1991-06-12 00:00:00'),
+('BU1033','El Imperio jesuítico','Ensayos','0877',22.98,NULL,'1904-06-12 00:00:00'),
+('BU1111','El castigo de Dios','Cuentos','1389',11.95,'','1991-06-09 00:00:00'),
+('BU1112','Los casos del comisario Croce','Cuentos','0736',20,NULL,'2018-12-01 00:00:00'),
+('BU2075','De las cosas maravillosas','Ensayos','0736',29.9,'','1991-06-30 00:00:00'),
+('BU7832','La mujer y su expresió','Ensayos','1389',19.99,'','1991-06-22 00:00:00'),
+('MC2222','Crónicas del angel gris','Relato','0877',19.99,'','1991-06-09 00:00:00'),
+('MC3021','El mundo contemporáneo','Historia','0877',29.9,'','1991-06-18 00:00:00'),
+('MC3022','El silenciero','Novelas','9901',32,NULL,'1964-03-10 00:00:00'),
+('MC3026','The Psychology of Computer Cooking','Sin asignar','0877',NULL,'','2004-12-13 00:00:00'),
+('PC1035','Pantaleón y las visitadoras','Novelas','1389',22.95,'','1991-06-30 00:00:00'),
+('PC8888','El matadero','Cuentos','1389',20,'','1994-06-12 00:00:00'),
+('PC8889','Sangre de amor correspondido','Novelas','1756',13,NULL,'1982-01-01 00:00:00'),
+('PC9999','La robotización del hombre y otras páginas','Antologías','1389',NULL,'','2004-12-13 00:00:00'),
+('PS1372','La ciudad ausente','Novelas','0877',21.59,'','1991-10-21 00:00:00'),
+('PS1373','Nadie nada nunca','Novelas','1622',20,NULL,'1980-06-12 00:00:00'),
+('PS2091','Caballo en el salitral','Antologías','0736',10.95,'','1991-06-15 00:00:00'),
+('PS2092','Memoria romana','Cuentos','9952',13.5,NULL,'2018-05-29 00:00:00'),
+('PS2106','Vivir afuera','Novelas','0736',70,'','1991-10-05 00:00:00'),
+('PS3333','Cuentos de Amor, de Locura y Muerte','Cuentos','0736',19.99,'','1991-06-12 00:00:00'),
+('PS7777','Sobre héroes y tumbas','Novelas','0736',79.9,'','1991-06-12 00:00:00'),
+('TC3218','La promesa','Novelas','0877',20.95,'','1991-10-21 00:00:00'),
+('TC4203','La pasión según Trelew','Crónicas','0877',11.95,'','1991-06-12 00:00:00'),
+('TC7777','La revolución en bicicleta','Novelas','0877',14.99,'','1991-06-12 00:00:00'),
+('TC7778','La metamorfosis','Novelas','9999',18,NULL,'1975-05-05 00:00:00'),
+('TC7779','El juguete rabioso','Novelas','9999',22,NULL,'1964-01-15 00:00:00');
+
+INSERT INTO locales VALUES 
+('6380','Yenny - El Ateneo','Petaonal San Martin 732','Paraná','ER','98056'),
+('7066','Librería Hernández','Diagonal 104 1436','La Plata','BA','92789'),
+('7067','Librería Santa Fe','Ovidio Lagos 3253','Rosario','SF','96745'),
+('7131','Librería Cúspide','Av San Martin 931','Capital','ME','98014'),
+('7896','SBS Librerías','Av Rivadavia 4791','Capital','CO','90019'),
+('8042','Planeta de Libros','Av Independencia 1682','Buenos Aires','CF','89076');
+
+INSERT INTO puestos VALUES 
+(1,'Nuevo Ingreso - Puesto no definido'),
+(2,'CEO'),
+(3,'Director de Operaciones de Negocio'),
+(4,'CFO'),
+(5,'Editorialista'),
+(6,'Director de Edición'),
+(7,'Director de Marketing'),
+(8,'Director de Relaciones Públicas'),
+(9,'Director de Compras'),
+(10,'Director de Producción'),
+(11,'Director de Operaciones'),
+(12,'Editor'),
+(13,'Representante de Ventas'),
+(14,'Diseñador');
+
+INSERT INTO ventas VALUES 
+('6380','6871','1994-09-14 00:00:00',5,'Efectivo','BU1032'),
+('6380','722','1994-09-13 00:00:00',3,'Efectivo','PS2091'),
+('7066','2976','1993-05-24 00:00:00',50,'Cheque','PC8888'),
+('7066','7442','1994-09-13 00:00:00',75,'Transf','PS2091'),
+('7067','4482','1994-09-14 00:00:00',10,'Efectivo','PS2091'),
+('7067','2121','1992-06-15 00:00:00',40,'Cheque','TC3218'),
+('7067','2121','1992-06-15 00:00:00',20,'Cheque','TC4203'),
+('7067','2121','1992-06-15 00:00:00',20,'Cheque','TC7777'),
+('7131','914008','1994-09-14 00:00:00',20,'Cheque','PS2091'),
+('7131','914014','1994-09-14 00:00:00',25,'Cheque','MC3021'),
+('7131','3087','1993-05-29 00:00:00',20,'Efectivo','PS1372'),
+('7131','3087','1993-05-29 00:00:00',25,'Efectivo','PS2106'),
+('7131','3087','1993-05-29 00:00:00',15,'Efectivo','PS3333'),
+('7131','3087','1993-05-29 00:00:00',25,'Efectivo','PS7777'),
+('7896','2299','1993-10-28 00:00:00',15,'Efectivo','BU7832'),
+('7896','456','1993-12-12 00:00:00',10,'Efectivo','MC2222'),
+('7896','999','1993-02-21 00:00:00',35,'Transf','BU2075'),
+('8042','423','1994-09-14 00:00:00',15,'Transf','MC3021'),
+('8042','423','1994-09-14 00:00:00',10,'Transf','BU1032'),
+('8042','723','1993-03-11 00:00:00',25,'Cheque','BU1111'),
+('8042','8791','1993-05-22 00:00:00',30,'Cheque','PC1035');
+
+-- 4.	Luego de insertar los registros, definir claves primarias (Primary Key) en cada tabla teniendo en cuenta que cada tabla tiene un campo con sufijo “_id” que identifica al campo clave. Asimismo, la lógica de negocio indica que un mismo número de factura se puede repetir en varios locales y en un mismo local pero con distintos código de libros, y la combinación de autor/libro es única. 
+
+alter table autores add primary key(autor_id);
+
+alter table puestos add primary key(puesto_id);
+
+alter table empleados add primary key(empleado_id);
+
+alter table libroautor add primary key(autor_id, libro_id);
+
+alter table locales add primary key(local_id);
+
+alter table editoriales add primary key(editorial_id);
+
+alter table libros add primary key(libro_id);
+
+alter table ventas add primary key(local_id, factura_nro, libro_id);
