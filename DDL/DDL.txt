@@ -1,0 +1,272 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema DDL
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema DDL
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `DDL` DEFAULT CHARACTER SET utf8 ;
+USE `DDL` ;
+
+-- -----------------------------------------------------
+-- Table `DDL`.`LOCALIDAD`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`LOCALIDAD` (
+  `idLocalidad` INT NOT NULL AUTO_INCREMENT,
+  `Nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idLocalidad`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`EMPRESA`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`EMPRESA` (
+  `id_Empresa` INT NOT NULL AUTO_INCREMENT,
+  `Nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_Empresa`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`CLIENTE EMPRESA`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`CLIENTE EMPRESA` (
+  `id_ClienteEmpresa` INT NOT NULL AUTO_INCREMENT,
+  `Nombre` VARCHAR(45) NOT NULL,
+  `TipoEmpresa` VARCHAR(45) NOT NULL,
+  `id_Empresa` INT NOT NULL,
+  PRIMARY KEY (`id_ClienteEmpresa`),
+  INDEX `id_Empresa_idx` (`id_Empresa` ASC) VISIBLE,
+  CONSTRAINT `id_Empresa`
+    FOREIGN KEY (`id_Empresa`)
+    REFERENCES `DDL`.`EMPRESA` (`id_Empresa`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`TELEFONOS`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`TELEFONOS` (
+  `idTelefonos` INT NOT NULL AUTO_INCREMENT,
+  `Numeros` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idTelefonos`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`TIPO_DNI`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`TIPO_DNI` (
+  `id_Tipo_dni` INT NOT NULL AUTO_INCREMENT,
+  `Tipo` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_Tipo_dni`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`TIPO`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`TIPO` (
+  `id_Tipo_Equipo` INT NOT NULL AUTO_INCREMENT,
+  `Modelo` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_Tipo_Equipo`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`EQUIPO`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`EQUIPO` (
+  `id_Equipo` INT NOT NULL AUTO_INCREMENT,
+  `id_Tipo_Equipo` INT NOT NULL,
+  `Año_Fabricacion` DATE NOT NULL,
+  `Fecha_alta` DATE NOT NULL,
+  `N_serie` INT NOT NULL,
+  PRIMARY KEY (`id_Equipo`),
+  INDEX `id_Tipo_Equipo_idx` (`id_Tipo_Equipo` ASC) VISIBLE,
+  CONSTRAINT `id_Tipo_Equipo`
+    FOREIGN KEY (`id_Tipo_Equipo`)
+    REFERENCES `DDL`.`TIPO` (`id_Tipo_Equipo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`TIPO_FACTURA`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`TIPO_FACTURA` (
+  `id_Tipo_Factura` INT NOT NULL AUTO_INCREMENT,
+  `Tipo` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_Tipo_Factura`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`FORMA_PAGO`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`FORMA_PAGO` (
+  `id_FormaPago` INT NOT NULL AUTO_INCREMENT,
+  `Tipo` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_FormaPago`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`DETALLE_FACTURA`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`DETALLE_FACTURA` (
+  `idDetalle_Factura` INT NOT NULL AUTO_INCREMENT,
+  `N_orden` INT NOT NULL,
+  PRIMARY KEY (`idDetalle_Factura`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`FACTURA`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`FACTURA` (
+  `N_Factura` INT NOT NULL AUTO_INCREMENT,
+  `Fecha` DATE NOT NULL,
+  `id_Detalle_Factura` INT NOT NULL,
+  `id_FormaPago` INT NOT NULL,
+  `id_Tipo_Factura` INT NOT NULL,
+  PRIMARY KEY (`N_Factura`),
+  CONSTRAINT `id_Tipo_Factura`
+    FOREIGN KEY (`N_Factura`)
+    REFERENCES `DDL`.`TIPO_FACTURA` (`id_Tipo_Factura`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `id_FormaPago`
+    FOREIGN KEY (`N_Factura`)
+    REFERENCES `DDL`.`FORMA_PAGO` (`id_FormaPago`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `idDetalle_Factura`
+    FOREIGN KEY (`N_Factura`)
+    REFERENCES `DDL`.`DETALLE_FACTURA` (`idDetalle_Factura`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`ITEM`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`ITEM` (
+  `id_Item` INT NOT NULL AUTO_INCREMENT,
+  `Detalle` VARCHAR(45) NOT NULL,
+  `Precio` DOUBLE NOT NULL,
+  PRIMARY KEY (`id_Item`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`NUMERO_ORDEN`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`NUMERO_ORDEN` (
+  `IDNumero_Orden` INT NOT NULL AUTO_INCREMENT,
+  `Detalle` VARCHAR(45) NOT NULL,
+  `id_Item` INT NOT NULL,
+  PRIMARY KEY (`IDNumero_Orden`),
+  CONSTRAINT `id_Item`
+    FOREIGN KEY (`IDNumero_Orden`)
+    REFERENCES `DDL`.`ITEM` (`id_Item`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`ORDEN_DE_TRABAJO`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`ORDEN_DE_TRABAJO` (
+  `id_OrdenTrabajo` INT NOT NULL AUTO_INCREMENT,
+  `Fecha` DATE NOT NULL,
+  `IDNumero_Orden` INT NOT NULL,
+  `Estado` BIT(1) NULL,
+  PRIMARY KEY (`id_OrdenTrabajo`),
+  CONSTRAINT `id_Tipo_Equipo`
+    FOREIGN KEY (`id_OrdenTrabajo`)
+    REFERENCES `DDL`.`TIPO` (`id_Tipo_Equipo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `id_Detalle_Factura`
+    FOREIGN KEY (`id_OrdenTrabajo`)
+    REFERENCES `DDL`.`DETALLE_FACTURA` (`idDetalle_Factura`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `id_NumeroOrden`
+    FOREIGN KEY (`id_OrdenTrabajo`)
+    REFERENCES `DDL`.`NUMERO_ORDEN` (`IDNumero_Orden`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `DDL`.`CLIENTE`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DDL`.`CLIENTE` (
+  `id_cliente` INT NOT NULL AUTO_INCREMENT,
+  `Nombre` VARCHAR(45) NOT NULL,
+  `idLocalidad` INT NOT NULL,
+  `id_ClienteEmpresa` INT NOT NULL,
+  `id_Telefono` INT NOT NULL,
+  `id_Tipo_dni` INT NOT NULL,
+  `DNI` INT NOT NULL,
+  PRIMARY KEY (`id_cliente`),
+  INDEX `idLocalidad_idx` (`idLocalidad` ASC) VISIBLE,
+  INDEX `id_ClienteEmpresa_idx` (`id_ClienteEmpresa` ASC) VISIBLE,
+  INDEX `id_Telefono_idx` (`id_Telefono` ASC) VISIBLE,
+  INDEX `id_Tipo_dni_idx` (`id_Tipo_dni` ASC) VISIBLE,
+  CONSTRAINT `idLocalidad`
+    FOREIGN KEY (`idLocalidad`)
+    REFERENCES `DDL`.`LOCALIDAD` (`idLocalidad`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `id_ClienteEmpresa`
+    FOREIGN KEY (`id_ClienteEmpresa`)
+    REFERENCES `DDL`.`CLIENTE EMPRESA` (`id_ClienteEmpresa`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `id_Telefono`
+    FOREIGN KEY (`id_Telefono`)
+    REFERENCES `DDL`.`TELEFONOS` (`idTelefonos`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `id_Tipo_dni`
+    FOREIGN KEY (`id_Tipo_dni`)
+    REFERENCES `DDL`.`TIPO_DNI` (`id_Tipo_dni`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `id_equipo`
+    FOREIGN KEY (`id_cliente`)
+    REFERENCES `DDL`.`EQUIPO` (`id_Equipo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `N_Factura`
+    FOREIGN KEY (`id_cliente`)
+    REFERENCES `DDL`.`FACTURA` (`N_Factura`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `id_OrdenTrabajo`
+    FOREIGN KEY (`id_cliente`)
+    REFERENCES `DDL`.`ORDEN_DE_TRABAJO` (`id_OrdenTrabajo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
